@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
@@ -20,19 +21,13 @@ use Illuminate\Support\Facades\Route;
 // PublicRoutes
 Route::post('/user/login', [UserController::class, 'login']);
 
-// GetListOfTeachers
-Route::get('/teachers', [TeacherController::class, 'index']);
-
-// GetListOfStudent
-Route::get('/students', [StudentController::class, 'index']);
-
 // RoutesForAdmin
-Route::group((['prefix' => 'admin']), function () {
+Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function () {
 
-    // addNewUser
-    Route::post('/user/add', [UserController::class, 'newUser']);
+    // AddNewUser
+    Route::post('/user/add', [UserController::class, 'store']);
 
-    // showUserByid
+    // GetUserByid
     Route::get('/user/{id}', [UserController::class, 'show']);
 
     // FillStudentInformation
@@ -40,17 +35,22 @@ Route::group((['prefix' => 'admin']), function () {
 
     // FillTeacherInformation
     Route::put('/teacher/form/{teacher}', [TeacherController::class, 'update']);
+
+    // GetListOfTeachers
+    Route::get('/teachers', [TeacherController::class, 'index']);
+
+    // GetListOfStudent
+    Route::get('/students', [StudentController::class, 'index']);
+
+    // AddNewSession
+    Route::post('/session/add', [SessionController::class, 'store']);
 });
 
 
 // RoutesForTeacher
-Route::prefix('teacher')->group(function () {
+Route::group((['prefix' => 'teacher', 'middleware' => ['auth:sanctum']]), function () {
 });
 
 // RoutesForStudents
-Route::prefix('student')->group(function () {
-});
-
-
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::group((['prefix' => 'student', 'middleware' => ['auth:sanctum']]), function () {
 });

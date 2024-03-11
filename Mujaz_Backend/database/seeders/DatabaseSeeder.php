@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,15 +16,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-        DB::table('users')->insert(
+        User::factory(1)->create();
+        /*
+        $user = User::create(
             [
-                [
-                    'name' => 'Admin Admin',
-                    'username' => 'AD_Admin_1',
-                    'password' => Hash::make('admin1-12345'),
-                    'role' => 'admin',
-                ],
+                'name' => 'Admin Admin',
+                'username' => 'AD_Admin_1',
+                'password' => Hash::make('admin1-12345'),
+                'role' => 'admin',
+                'remember_token'=> $token
+            ]
+        );
+        $token = $user->createToken('myapptoken')->plainTextToken;
+
+        */
+        /*
                 [
                     'name' => 'Admin Admin',
                     'username' => 'AD_Admin_2',
@@ -38,5 +45,31 @@ class DatabaseSeeder extends Seeder
                 ]
             ]
         );
+        */
+
+        /*
+        DB::table('admins')->insert(
+            [
+                [
+                    'name' => 'Admin Admin',
+                    'username' => 'AD_Admin_1',
+                    'password' => Hash::make('admin1-12345'),
+
+                ],
+                [
+                    'name' => 'Admin Admin',
+                    'username' => 'AD_Admin_2',
+                    'password' => Hash::make('admin2-12345'),
+
+                ],
+                [
+                    'name' => 'Admin Admin',
+                    'username' => 'AD_Admin_3',
+                    'password' => Hash::make('admin3-12345'),
+
+                ]
+            ]
+        );
+        */
     }
 }

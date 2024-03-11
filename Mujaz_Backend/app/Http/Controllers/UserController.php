@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 class UserController extends Controller
 {
 
-    public function newUser(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:users',

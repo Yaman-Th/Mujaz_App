@@ -13,6 +13,5 @@ class student extends Model
         'teacher_id',
         'teacher_name',
         'starting_verse',
-
     ];
 }

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use TaylorNetwork\UsernameGenerator\Generator;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,6 +24,22 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $generator = new Generator();
+        $random = str_shuffle('12345678abcdefghijklmnopqrstuvwxyz');
+        $name = substr($random, 0, 3);
+        $password = substr($random, 0, 8);
+        //$username = substr($random, 0, 5);
+
+        $username = "AD " . $generator->generate('Admin');
+
+        return [
+            'name' => "admin_" . $name,
+            'username' => $username,
+            'password' => Hash::make('adminpassword'),
+            'role' => 'admin',
+            'remember_token' => Str::random(10)
+        ];
+        /*
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
@@ -30,6 +47,7 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
+        */
     }
 
     /**
