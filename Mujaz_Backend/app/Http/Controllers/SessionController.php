@@ -30,6 +30,7 @@ class SessionController extends Controller
 
         $session = session::create(
             [
+                'date' => $request->date,
                 'student_id' => $student->id,
                 'student_name' => $student->name,
                 'teacher_id' => $teacher->id,
