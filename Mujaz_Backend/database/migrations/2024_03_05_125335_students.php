@@ -17,8 +17,10 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique(true);
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(teacher::class)->default('0');
-            $table->integer('starting_verse')->default('1');
+            $table->foreignIdFor(teacher::class)->nullable();
+            $table->string('teacher_name')->nullable();
+            $table->integer('phone')->nullable();
+            $table->date('starting_date')->nullable();
             $table->timestamps();
         });
     }

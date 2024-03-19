@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Models\session;
 use App\Models\mistake;
+use App\Models\student;
+use App\Models\teacher;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller
@@ -14,7 +16,8 @@ class SessionController extends Controller
      */
     public function index()
     {
-        //
+        $sessions = session::all();
+        return response()->json($sessions);
     }
 
     /**
@@ -22,37 +25,59 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
+        $student = student::find($request->student_id);
+        $teacher = teacher::find($request->teacher_id);
+
         $session = session::create(
             [
-                'student_name' => $request->student_name,
-                'teacher_name' => $request->teacher_name,
-                'start_page' => $request->start_page,
-                'end_page' => $request->end_page,
-                'first_ayah' => $request->first_ayah,
-                'last_ayah' => $request->last_ayah,
+                'student_id' => $student->id,
+                'student_name' => $student->name,
+                'teacher_id' => $teacher->id,
+                'teacher_name' => $teacher->name,
+                'pages' => $request->pages,
+                'ayat' => $request->ayat,
                 'amount' => $request->amount,
-                'mark' => $request->mark
+                'mark' => $request->mark,
+                'notes' => $request->notes
             ]
         );
 
-        $mistake = mistake::create([
-            'session_id' => $session->id,
+        for ($i = 0; $i < $request->mistakes_num; $i++) {
+            $mistakes = mistake::create(
+                [
+                    'session_id' => $session->id,
+                    'type' => $request->mistakes[$i]['type'],
+                    'ayah_num' => $request->mistakes[$i]['ayah_num'],
+                    'word' => $request->mistakes[$i]['word'],
+                    'mark' => $request->mistakes[$i]['mark'],
+                ]
+            );
+        }
 
-        ]);
+        return response()->json('session created successfully', 200);
     }
 
+    // Get sessions by studnet
+    public function getByStudent(student $student)
+    {
+        $student_id = $student->id;
+
+        $sessions = session::where('student_id', $student_id)->get();
+        return response()->json($sessions, 200);
+    }
+
+    // Get sessions by teacher
+    public function getByTeacher(teacher $teacher)
+    {
+        $teacher_id = $teacher->id;
+
+        $sessions = session::where('teacher_id', $teacher_id)->get();
+        return response()->json($sessions, 200);
+    }
     /**
      * Display the specified resource.
      */
     public function show(session $session)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(session $session)
     {
         //
     }

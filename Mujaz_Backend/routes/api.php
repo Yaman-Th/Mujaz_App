@@ -44,6 +44,15 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
 
     // AddNewSession
     Route::post('/session/add', [SessionController::class, 'store']);
+
+    //GetAllSessions
+    Route::get('/sessions', [SessionController::class, 'index']);
+
+    //GetSessionsByStudent
+    Route::get('/session/students/{student}', [SessionController::class, 'getByStudent']);
+
+    //GetSessionsByTeacher
+    Route::get('/session/teachers/{teacher}', [SessionController::class, 'getByTeacher']);
 });
 
 

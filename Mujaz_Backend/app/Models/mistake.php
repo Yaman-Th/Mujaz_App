@@ -12,7 +12,6 @@ class mistake extends Model
         'type',
         'ayah_num',
         'word',
-        'notes',
-        'status',
+        'mark',
     ];
 }

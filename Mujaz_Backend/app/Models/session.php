@@ -13,12 +13,15 @@ class session extends Model
         'student_name',
         'teacher_id',
         'teacher_name',
-        'start_page',
-        'end_page',
-        'first_ayah',
-        'last_ayah',
+        'pages',
+        'ayat',
         'amount',
-        'mark'
+        'mark',
+        'notes'
+    ];
 
+    protected $casts = [
+        'pages' => 'array',
+        'ayat' => 'array'
     ];
 }

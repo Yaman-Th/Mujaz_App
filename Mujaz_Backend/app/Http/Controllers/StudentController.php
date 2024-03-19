@@ -57,7 +57,13 @@ class StudentController extends Controller
      */
     public function update(Request $request, student $student)
     {
-        $student->update($request->all());
+        $teacher = teacher::find($request->teacher_id);
+        $student->update([
+            'teacher_id' => $teacher->id,
+            'teacher_name' => $teacher->name,
+            'phone' => $request->phone,
+            'starting_date' => $request->starting_date
+        ]);
 
         return response()->json($student);
     }
