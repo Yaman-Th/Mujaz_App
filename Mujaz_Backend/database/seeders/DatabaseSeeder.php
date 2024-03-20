@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(1)->create();
+        //DB::table('admins')->insert();
         /*
         $user = User::create(
             [

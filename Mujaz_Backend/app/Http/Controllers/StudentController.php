@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\student;
+use App\Models\teacher;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -18,14 +19,6 @@ class StudentController extends Controller
             return response()->json('Sorry, No Students Here', 404);
 
         return response()->json($students);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -45,19 +38,12 @@ class StudentController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(student $student)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, student $student)
     {
         $teacher = teacher::find($request->teacher_id);
+
         $student->update([
             'teacher_id' => $teacher->id,
             'teacher_name' => $teacher->name,

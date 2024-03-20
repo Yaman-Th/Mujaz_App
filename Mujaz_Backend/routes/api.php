@@ -53,6 +53,9 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
 
     //GetSessionsByTeacher
     Route::get('/session/teachers/{teacher}', [SessionController::class, 'getByTeacher']);
+
+    //GetSessionsByDate
+
 });
 
 

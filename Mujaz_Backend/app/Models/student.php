@@ -13,5 +13,6 @@ class student extends Model
         'teacher_id',
         'teacher_name',
         'phone',
+        'starting_date'
     ];
 }

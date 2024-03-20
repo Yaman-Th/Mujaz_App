@@ -23,6 +23,7 @@ return new class extends Migration
             $table->json('pages')->nullable();
             $table->json('ayat')->nullable();
             $table->float('amount');
+            $table->json('mistakes')->nullable();
             $table->float('mark');
             $table->string('notes');
             $table->timestamps();

@@ -7,6 +7,7 @@ use App\Models\session;
 use App\Models\mistake;
 use App\Models\student;
 use App\Models\teacher;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SessionController extends Controller
@@ -25,32 +26,40 @@ class SessionController extends Controller
      */
     public function store(Request $request)
     {
+        $user = user::find($request->user_id);
         $student = student::find($request->student_id);
-        $teacher = teacher::find($request->teacher_id);
+        $teacher = teacher::where('user_id', $request->user_id)->first();
 
-        $session = session::create(
-            [
-                'date' => $request->date,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'teacher_id' => $teacher->id,
-                'teacher_name' => $teacher->name,
-                'pages' => $request->pages,
-                'ayat' => $request->ayat,
-                'amount' => $request->amount,
-                'mark' => $request->mark,
-                'notes' => $request->notes
-            ]
-        );
-
-        for ($i = 0; $i < $request->mistakes_num; $i++) {
-            $mistakes = mistake::create(
+        if ($user->role === 'admin') {
+            $session = session::create(
                 [
-                    'session_id' => $session->id,
-                    'type' => $request->mistakes[$i]['type'],
-                    'ayah_num' => $request->mistakes[$i]['ayah_num'],
-                    'word' => $request->mistakes[$i]['word'],
-                    'mark' => $request->mistakes[$i]['mark'],
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $user->id,
+                    'teacher_name' => $user->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'mark' => $request->mark,
+                    'notes' => $request->notes
+                ]
+            );
+        } else if ($user->role === 'Teacher') {
+            $session = session::create(
+                [
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $teacher->id,
+                    'teacher_name' => $teacher->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'mark' => $request->mark,
+                    'notes' => $request->notes
                 ]
             );
         }

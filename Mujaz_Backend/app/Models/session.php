@@ -16,12 +16,14 @@ class session extends Model
         'pages',
         'ayat',
         'amount',
+        'mistakes',
         'mark',
         'notes'
     ];
 
     protected $casts = [
         'pages' => 'array',
-        'ayat' => 'array'
+        'ayat' => 'array',
+        'mistakes' => 'array'
     ];
 }
