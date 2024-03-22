@@ -25,6 +25,7 @@ return new class extends Migration
             $table->float('amount');
             $table->json('mistakes')->nullable();
             $table->float('mark');
+            $table->time('duration');
             $table->string('notes');
             $table->timestamps();
         });

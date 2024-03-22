@@ -24,13 +24,14 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $generator = new Generator();
+        //$generator = new Generator();
         $random = str_shuffle('12345678abcdefghijklmnopqrstuvwxyz');
+        $number = substr(str_shuffle('1234567890'), 0, 3);
         $name = substr($random, 0, 3);
         $password = substr($random, 0, 8);
         //$username = substr($random, 0, 5);
 
-        $username = "AD " . $generator->generate('Admin');
+        $username = "AD_" . "Admin" . $number;
 
         return [
             'name' => "admin_" . $name,

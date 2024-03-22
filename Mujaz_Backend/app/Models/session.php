@@ -18,6 +18,7 @@ class session extends Model
         'amount',
         'mistakes',
         'mark',
+        'duration',
         'notes'
     ];
 

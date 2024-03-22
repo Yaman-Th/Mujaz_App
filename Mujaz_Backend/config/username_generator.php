@@ -27,7 +27,7 @@ return [
      *
      * Set to 0 to not enforce
      */
-    'max_length' => 12,
+    'max_length' => 15,
 
     /*
      * Want to throw a UsernameTooLong exception when too long?
@@ -63,7 +63,7 @@ return [
     /*
      * Validate characters using RegEx
      */
-    'validate_characters' => true,
+    'validate_characters' => false,
 
     /*
      * Allowed characters from the original unconverted text
@@ -98,7 +98,7 @@ return [
      * if someone enters their own. If set to false, when the username
      * field is not empty then the generator will not run.
      */
-    'generate_entered_username' => true,
+    'generate_entered_username' => false,
 
     /*
      * Prefer using database REGEXP function?

@@ -27,6 +27,9 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // AddNewUser
     Route::post('/user/add', [UserController::class, 'store']);
 
+    // UpdateUserInformtion
+    Route::put('/user/{user}', [UserController::class, 'update']);
+
     // GetUserByid
     Route::get('/user/{id}', [UserController::class, 'show']);
 

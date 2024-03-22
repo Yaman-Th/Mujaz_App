@@ -23,9 +23,11 @@ class UserController extends Controller
         $generator = new Generator();
 
         if ($request->role == "Student") {
-            $username = "ST " . $generator->generate($request->name);
+            $request->name = "ST " . $request->name;
+            $username = $generator->generate($request->name);
         } else if ($request->role == "Teacher") {
-            $username = "TE " . $generator->generate($request->name);
+            $request->name = "TE " . $request->name;
+            $username = $generator->generate($request->name);
         }
 
         $random = str_shuffle('12345678abcdefghijklmnopqrstuvwxyz');
@@ -99,5 +101,29 @@ class UserController extends Controller
                 'user' => $user,
                 'token' => $user->createToken('myapptoken')->plainTextToken,
             ]);
+    }
+
+    public function logout(Request $request)
+    {
+
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json('Logged out successfully');
+    }
+
+    public function deleteUser(User $user)
+    {
+        $user->delete();
+        return response()->json(null, 204);
+    }
+
+    public function update(User $user, Request $request)
+    {
+        $user->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+        ]);
+
+        return response()->json($user, 200);
     }
 }

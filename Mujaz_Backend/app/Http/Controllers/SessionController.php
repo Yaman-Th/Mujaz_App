@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 
 use App\Models\session;
-use App\Models\mistake;
 use App\Models\student;
 use App\Models\teacher;
 use App\Models\User;
@@ -43,6 +42,7 @@ class SessionController extends Controller
                     'amount' => $request->amount,
                     'mistakes' => $request->mistakes,
                     'mark' => $request->mark,
+                    'duration' => $request->duration,
                     'notes' => $request->notes
                 ]
             );
@@ -59,6 +59,7 @@ class SessionController extends Controller
                     'amount' => $request->amount,
                     'mistakes' => $request->mistakes,
                     'mark' => $request->mark,
+                    'duration' => $request->duration,
                     'notes' => $request->notes
                 ]
             );
