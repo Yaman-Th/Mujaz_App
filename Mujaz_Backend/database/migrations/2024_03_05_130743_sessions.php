@@ -24,6 +24,7 @@ return new class extends Migration
             $table->json('ayat')->nullable();
             $table->float('amount');
             $table->json('mistakes')->nullable();
+            $table->integer('taps_num');
             $table->float('mark');
             $table->time('duration');
             $table->string('notes');

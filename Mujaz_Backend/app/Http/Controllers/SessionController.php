@@ -41,6 +41,7 @@ class SessionController extends Controller
                     'ayat' => $request->ayat,
                     'amount' => $request->amount,
                     'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
                     'mark' => $request->mark,
                     'duration' => $request->duration,
                     'notes' => $request->notes
@@ -58,6 +59,7 @@ class SessionController extends Controller
                     'ayat' => $request->ayat,
                     'amount' => $request->amount,
                     'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
                     'mark' => $request->mark,
                     'duration' => $request->duration,
                     'notes' => $request->notes

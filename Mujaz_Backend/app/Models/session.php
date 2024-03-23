@@ -17,6 +17,7 @@ class session extends Model
         'ayat',
         'amount',
         'mistakes',
+        'taps_num',
         'mark',
         'duration',
         'notes'
