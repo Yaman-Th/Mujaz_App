@@ -6,12 +6,27 @@ use App\Models\User;
 use App\Models\student;
 use App\Models\teacher;
 use Illuminate\Http\Request;
-use TaylorNetwork\UsernameGenerator\Generator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use ArPHP\I18N\Arabic;
 
 class UserController extends Controller
 {
+
+    public function generateUsername($name)
+    {
+        $arabic = new Arabic();
+        $characters = '0123456789'; // Allowed characters
+
+        $name = str_replace(" ", "_", strtolower($arabic->ar2en($name)));
+        $username = substr($name, 0, 5) . rand(100, 999);
+        // Check for uniqueness (replace with your actual user table check)
+        while (User::where('username', $username)->exists()) {
+            $username = substr($name, 0, 5) . rand(100, 999);
+        }
+
+        return $username;
+    }
 
     public function store(Request $request)
     {
@@ -20,14 +35,11 @@ class UserController extends Controller
             'role' => 'required|string'
         ]);
 
-        $generator = new Generator();
 
-        if ($request->role == "Student") {
-            $request->name = "ST " . $request->name;
-            $username = $generator->generate($request->name);
-        } else if ($request->role == "Teacher") {
-            $request->name = "TE " . $request->name;
-            $username = $generator->generate($request->name);
+        if ($request->role == "student") {
+            $username = "st_" . UserController::generateUsername($request->name);
+        } else if ($request->role == "teacher") {
+            $username = "te_" . UserController::generateUsername($request->name);
         }
 
         $random = str_shuffle('12345678abcdefghijklmnopqrstuvwxyz');
@@ -40,12 +52,12 @@ class UserController extends Controller
             'role' => $request->role
         ]);
 
-        if ($user->role == "Student") {
+        if ($user->role == "student") {
             $student = student::create([
                 'name' => $user->name,
                 'user_id' => $user->id,
             ]);
-        } else if ($user->role == "Teacher") {
+        } else if ($user->role == "teacher") {
             $teacher = teacher::create([
                 'name' => $user->name,
                 'user_id' => $user->id,
@@ -111,7 +123,7 @@ class UserController extends Controller
         return response()->json('Logged out successfully');
     }
 
-    public function deleteUser(User $user)
+    public function destroy(User $user)
     {
         $user->delete();
         return response()->json(null, 204);

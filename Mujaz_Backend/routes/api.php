@@ -30,6 +30,12 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // UpdateUserInformtion
     Route::put('/user/{user}', [UserController::class, 'update']);
 
+    // Logout
+    Route::post('/user/logout', [UserController::class, 'logout']);
+
+    // DeleteUser
+    Route::delete('/user/destroy/{user}', [UserController::class, 'destroy']);
+
     // GetUserByid
     Route::get('/user/{id}', [UserController::class, 'show']);
 
@@ -57,8 +63,8 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     //GetSessionsByTeacher
     Route::get('/session/teachers/{teacher}', [SessionController::class, 'getByTeacher']);
 
-    //GetSessionsByDate
-
+    //GetSessionsByFilter
+    Route::get('/session', [SessionController::class, 'filteredSessions']);
 });
 
 

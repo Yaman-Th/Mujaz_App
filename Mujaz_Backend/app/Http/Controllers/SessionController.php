@@ -47,7 +47,7 @@ class SessionController extends Controller
                     'notes' => $request->notes
                 ]
             );
-        } else if ($user->role === 'Teacher') {
+        } else if ($user->role === 'teacher') {
             $session = session::create(
                 [
                     'date' => $request->date,
@@ -85,6 +85,45 @@ class SessionController extends Controller
         $teacher_id = $teacher->id;
 
         $sessions = session::where('teacher_id', $teacher_id)->get();
+        return response()->json($sessions, 200);
+    }
+
+    public function filteredSessions(Request $request)
+    {
+
+        $student_name = $request->query('student_name');
+        $teacher_name = $request->query('teacher_name');
+        $dateFrom = $request->query('dateFrom');
+        $dateTo = $request->query('dateTo');
+
+
+        $sessions = session::where(function ($query) use ($teacher_name, $student_name, $dateFrom, $dateTo) {
+
+            if ($student_name && $teacher_name && $dateFrom && $dateTo) {
+                $query->where('teacher_name', $teacher_name)
+                    ->where('student_name', $student_name)
+                    ->whereBetween('date', [$dateFrom, $dateTo]);
+            }
+
+            if ($teacher_name && $dateFrom && $dateTo) {
+                $query->where('teacher_name', $teacher_name)
+                    ->whereBetween('date', [$dateFrom, $dateTo]);
+            }
+            if ($student_name && $dateFrom && $dateTo) {
+                $query->where('student_name', $student_name)
+                    ->whereBetween('date', [$dateFrom, $dateTo]);
+            }
+            if ($teacher_name) {
+                $query->where('teacher_name', $teacher_name);
+            }
+            if ($student_name) {
+                $query->where('student_name', $student_name);
+            }
+            if ($dateFrom && $dateTo) {
+                $query->whereBetween('date', [$dateFrom, $dateTo]);
+            }
+        })->get();
+
         return response()->json($sessions, 200);
     }
     /**
