@@ -139,7 +139,49 @@ class SessionController extends Controller
      */
     public function update(Request $request, session $session)
     {
-        //
+        $user = user::find($request->user_id);
+        $student = student::find($request->student_id);
+        $teacher = teacher::where('user_id', $request->user_id)->first();
+
+        if ($user->role === 'admin') {
+            $session->update(
+                [
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $user->id,
+                    'teacher_name' => $user->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
+                    'mark' => $request->mark,
+                    'duration' => $request->duration,
+                    'notes' => $request->notes
+                ]
+            );
+        } else if ($user->role === 'teacher') {
+            $session->update(
+                [
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $teacher->id,
+                    'teacher_name' => $teacher->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
+                    'mark' => $request->mark,
+                    'duration' => $request->duration,
+                    'notes' => $request->notes
+                ]
+            );
+        }
+
+        return response()->json($session);
     }
 
     /**
@@ -147,6 +189,7 @@ class SessionController extends Controller
      */
     public function destroy(session $session)
     {
-        //
+        $session->delete();
+        return response()->json('session deleted succefully !!', 204);
     }
 }

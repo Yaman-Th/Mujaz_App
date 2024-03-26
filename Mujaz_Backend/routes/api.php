@@ -4,6 +4,7 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -54,17 +55,23 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // AddNewSession
     Route::post('/session/add', [SessionController::class, 'store']);
 
-    //GetAllSessions
+    // GetAllSessions
     Route::get('/sessions', [SessionController::class, 'index']);
 
-    //GetSessionsByStudent
+    // GetSessionsByStudent
     Route::get('/session/students/{student}', [SessionController::class, 'getByStudent']);
 
-    //GetSessionsByTeacher
+    // GetSessionsByTeacher
     Route::get('/session/teachers/{teacher}', [SessionController::class, 'getByTeacher']);
 
-    //GetSessionsByFilter
+    // GetSessionsByFilter
     Route::get('/session', [SessionController::class, 'filteredSessions']);
+
+    // UpdateSession
+    Route::put('/session/{session}', [SessionController::class, 'update']);
+
+    // DestroySession
+    Route::delete('/session/destroy/{session}', [SessionController::class, 'destroy']);
 });
 
 
