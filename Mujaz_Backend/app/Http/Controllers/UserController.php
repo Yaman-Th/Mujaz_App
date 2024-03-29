@@ -35,6 +35,8 @@ class UserController extends Controller
             'role' => 'required|string'
         ]);
 
+        $teacher = teacher::where('user_id', $request->user_id)->first();
+        $requestUser = user::find($request->user_id);
 
         if ($request->role == "student") {
             $username = "st_" . UserController::generateUsername($request->name);
@@ -51,18 +53,36 @@ class UserController extends Controller
             'password' => $password,
             'role' => $request->role
         ]);
-
-        if ($user->role == "student") {
-            $student = student::create([
-                'name' => $user->name,
-                'user_id' => $user->id,
-            ]);
-        } else if ($user->role == "teacher") {
-            $teacher = teacher::create([
-                'name' => $user->name,
-                'user_id' => $user->id,
-            ]);
+        if ($requestUser->role == "admin") {
+            if ($user->role == "student") {
+                $student = student::create([
+                    'name' => $user->name,
+                    'user_id' => $user->id,
+                    'teacher_id' => $requestUser->id,
+                    'teacher_name' => $requestUser->name
+                ]);
+            } else if ($user->role == "teacher") {
+                $teacher = teacher::create([
+                    'name' => $user->name,
+                    'user_id' => $user->id,
+                ]);
+            }
+        } else if ($requestUser->role == "teacher") {
+            if ($user->role == "student") {
+                $student = student::create([
+                    'name' => $user->name,
+                    'user_id' => $user->id,
+                    'teacher_id' => $teacher->id,
+                    'teacher_name' => $teacher->name
+                ]);
+            } else if ($user->role == "teacher") {
+                $teacher = teacher::create([
+                    'name' => $user->name,
+                    'user_id' => $user->id,
+                ]);
+            }
         }
+
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 

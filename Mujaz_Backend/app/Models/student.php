@@ -13,6 +13,12 @@ class student extends Model
         'teacher_id',
         'teacher_name',
         'phone',
-        'starting_date'
+        'starting_date',
+        'tested_verses',
+        'notes'
+    ];
+
+    protected $casts = [
+        'tested_verses' => 'array',
     ];
 }

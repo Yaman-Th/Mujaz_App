@@ -40,8 +40,14 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // GetUserByid
     Route::get('/user/{id}', [UserController::class, 'show']);
 
-    // FillStudentInformation
+    // FillStudentInfo
     Route::put('/student/form/{student}', [StudentController::class, 'update']);
+
+    // GetStudentInfo
+    Route::get('/student/info/{student}', [StudentController::class, 'showInfo']);
+
+    // GetListOfStudent
+    Route::get('/students', [StudentController::class, 'index']);
 
     // FillTeacherInformation
     Route::put('/teacher/form/{teacher}', [TeacherController::class, 'update']);
@@ -49,8 +55,6 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // GetListOfTeachers
     Route::get('/teachers', [TeacherController::class, 'index']);
 
-    // GetListOfStudent
-    Route::get('/students', [StudentController::class, 'index']);
 
     // AddNewSession
     Route::post('/session/add', [SessionController::class, 'store']);

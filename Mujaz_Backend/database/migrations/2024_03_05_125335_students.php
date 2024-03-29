@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('teacher_name')->nullable();
             $table->integer('phone')->nullable();
             $table->date('starting_date')->nullable();
+            $table->json('tested_verses')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
