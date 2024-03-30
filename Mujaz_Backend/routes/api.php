@@ -49,6 +49,9 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // GetListOfStudent
     Route::get('/students', [StudentController::class, 'index']);
 
+    // GetStudentsByTeacher
+    Route::get('/students/{teacher}', [StudentController::class, 'getByTeacher']);
+
     // FillTeacherInformation
     Route::put('/teacher/form/{teacher}', [TeacherController::class, 'update']);
 

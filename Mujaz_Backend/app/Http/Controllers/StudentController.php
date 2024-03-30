@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\student;
 use App\Models\teacher;
 use App\Models\session;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -23,6 +24,12 @@ class StudentController extends Controller
         return response()->json($students);
     }
 
+    public function getByTeacher(teacher $teacher)
+    {
+        $students = student::where('teacher_name', $teacher->name)->get();
+
+        return response()->json($students);
+    }
 
     /**
      * Display the specified resource.
