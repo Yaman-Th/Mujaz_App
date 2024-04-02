@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use App\Models\admin;
+use App\Models\teacher;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -16,7 +18,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(1)->create();
+        $user = User::factory(1)->create();
+
+        teacher::create([
+            'name' => $user->first()->name,
+            'user_id' => $user->first()->id,
+        ]);
+
+        admin::create([
+            'name' => $user->first()->name,
+            'user_id' => $user->first()->id,
+        ]);
         //DB::table('admins')->insert();
         /*
         $user = User::create(

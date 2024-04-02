@@ -31,7 +31,6 @@ class adminFactory extends Factory
             'username' => $username,
             'password' => $password,
             'role' => 'admin',
-            'remember_token' => Str::random(10)
         ];
     }
 }

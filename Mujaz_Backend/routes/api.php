@@ -84,6 +84,9 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
 
 // RoutesForTeacher
 Route::group((['prefix' => 'teacher', 'middleware' => ['auth:sanctum']]), function () {
+
+    // AddNewUser
+    Route::post('/user/add', [UserController::class, 'store']);
 });
 
 // RoutesForStudents

@@ -36,7 +36,7 @@ class UserController extends Controller
         ]);
 
         $teacher = teacher::where('user_id', $request->user_id)->first();
-        $requestUser = user::find($request->user_id);
+        $requestUser = User::find($request->user_id);
 
         if ($request->role == "student") {
             $username = "st_" . UserController::generateUsername($request->name);
@@ -47,38 +47,42 @@ class UserController extends Controller
         $random = str_shuffle('12345678abcdefghijklmnopqrstuvwxyz');
         $password = substr($random, 0, 8);
 
-        $user = User::create([
-            'name' => $request->name,
-            'username' => $username,
-            'password' => $password,
-            'role' => $request->role
-        ]);
         if ($requestUser->role == "admin") {
+            $user = User::create([
+                'name' => $request->name,
+                'username' => $username,
+                'password' => $password,
+                'role' => $request->role
+            ]);
+
             if ($user->role == "student") {
-                $student = student::create([
-                    'name' => $user->name,
-                    'user_id' => $user->id,
-                    'teacher_id' => $requestUser->id,
-                    'teacher_name' => $requestUser->name
-                ]);
-            } else if ($user->role == "teacher") {
-                $teacher = teacher::create([
-                    'name' => $user->name,
-                    'user_id' => $user->id,
-                ]);
-            }
-        } else if ($requestUser->role == "teacher") {
-            if ($user->role == "student") {
-                $student = student::create([
+                student::create([
                     'name' => $user->name,
                     'user_id' => $user->id,
                     'teacher_id' => $teacher->id,
                     'teacher_name' => $teacher->name
                 ]);
             } else if ($user->role == "teacher") {
-                $teacher = teacher::create([
+                teacher::create([
                     'name' => $user->name,
                     'user_id' => $user->id,
+                ]);
+            }
+        } else if ($requestUser->role == "teacher") {
+            if ($request->role == "teacher")
+                return response()->json('You Are not authorized to Add Teachers', 401);
+            elseif ($request->role == "student") {
+                $user = User::create([
+                    'name' => $request->name,
+                    'username' => $username,
+                    'password' => $password,
+                    'role' => $request->role
+                ]);
+                student::create([
+                    'name' => $user->name,
+                    'user_id' => $user->id,
+                    'teacher_id' => $teacher->id,
+                    'teacher_name' => $teacher->name
                 ]);
             }
         }

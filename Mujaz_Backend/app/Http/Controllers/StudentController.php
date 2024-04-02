@@ -26,7 +26,7 @@ class StudentController extends Controller
 
     public function getByTeacher(teacher $teacher)
     {
-        $students = student::where('teacher_name', $teacher->name)->get();
+        $students = student::where('teacher_id', $teacher->id)->get();
 
         return response()->json($students);
     }
