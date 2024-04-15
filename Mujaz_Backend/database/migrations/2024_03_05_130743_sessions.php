@@ -27,7 +27,7 @@ return new class extends Migration
             $table->integer('taps_num');
             $table->float('mark');
             $table->time('duration');
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }
