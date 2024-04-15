@@ -121,17 +121,23 @@ class UserController extends Controller
 
         $user = User::where('username', $request->username)->first();
 
-
-
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'username' => ['The provided credentials are incorrect.'],
             ]);
         }
 
+        if ($user->role === 'teacher' || $user->role === 'admin') {
+            $teacher = teacher::where('user_id', $user->id)->first();
 
-
-        return response()
+            return response()
+                ->json([
+                    'message' => 'You have logged in successfully.',
+                    'user' => $user,
+                    'teacher_id' => $teacher->id,
+                    'token' => $user->createToken('myapptoken')->plainTextToken,
+                ]);
+        } else return response()
             ->json([
                 'message' => 'You have logged in successfully.',
                 'user' => $user,
