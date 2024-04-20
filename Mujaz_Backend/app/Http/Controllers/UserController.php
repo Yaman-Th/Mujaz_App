@@ -110,6 +110,12 @@ class UserController extends Controller
 
         return $user;
     }
+    public function getAcounts()
+    {
+        $users = User::all();
+
+        return response()->json($users);
+    }
 
     public function login(Request $request)
     {
@@ -137,12 +143,13 @@ class UserController extends Controller
                     'teacher_id' => $teacher->id,
                     'token' => $user->createToken('myapptoken')->plainTextToken,
                 ]);
-        } else return response()
-            ->json([
-                'message' => 'You have logged in successfully.',
-                'user' => $user,
-                'token' => $user->createToken('myapptoken')->plainTextToken,
-            ]);
+        } else
+            return response()
+                ->json([
+                    'message' => 'You have logged in successfully.',
+                    'user' => $user,
+                    'token' => $user->createToken('myapptoken')->plainTextToken,
+                ]);
     }
 
     public function logout(Request $request)

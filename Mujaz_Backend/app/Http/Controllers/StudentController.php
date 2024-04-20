@@ -42,44 +42,59 @@ class StudentController extends Controller
         // last session - DONE
         $lastSession = session::where('student_id', $student->id)
             ->latest()->first();
-
-        // remain amount - DONE
-        $remainPages = 604 - last($lastSession->pages);
-        $remainVerses = $remainPages / 20;
-
         // name - DONE
         $name = $student->name;
-
-        // tested verses - DONE
-        $testedVerses = $student->tested_verses;
-
-        // sessions count in every month - DONE
-        // $avgSessionsInMonth = count($sessions);
-
-        // avarege marks - DONE
-        $sum = 0;
-        for ($i = 0; $i < count($sessions); $i++) {
-            $sum = $sum + $sessions[$i]->mark;
-        }
-        $avgMarks = $sum / count($sessions);
 
         // teacher name - DONE
         $teacher_name = $student->teacher_name;
 
-        // notes - DONE
-        $notes = $student->notes;
+        if (!$sessions || !$lastSession) {
+            $response = [
+                'name' => $name,
+                'teacher_name' => $teacher_name,
+                'last_session' => null,
+                'remain_pages' => null,
+                'remain_verses' => null,
+                'average_marks' => null,
+                'tested_verses' => null,
+                'notes' => null
+            ];
+            return response()->json($response);
+        } else {
 
-        $response = [
-            'name' => $name,
-            'teacher_name' => $teacher_name,
-            'last_session' => $lastSession,
-            'remain_pages' => $remainPages,
-            'remain_verses' => $remainVerses,
-            'average_marks' => $avgMarks,
-            'tested_verses' => $testedVerses,
-            'notes' => $notes
-        ];
-        return response()->json($response);
+            // remain amount - DONE
+            $remainPages = 604 - last($lastSession->pages);
+            $remainVerses = $remainPages / 20;
+
+            // tested verses - DONE
+            $testedVerses = $student->tested_verses;
+
+            // sessions count in every month - DONE
+            // $avgSessionsInMonth = count($sessions);
+
+            // avarege marks - DONE
+            $sum = 0;
+            for ($i = 0; $i < count($sessions); $i++) {
+                $sum = $sum + $sessions[$i]->mark;
+            }
+            $avgMarks = $sum / count($sessions);
+
+            // notes - DONE
+            $notes = $student->notes;
+
+            $response = [
+                'name' => $name,
+                'teacher_name' => $teacher_name,
+                'last_session' => $lastSession,
+                'remain_pages' => $remainPages,
+                'remain_verses' => $remainVerses,
+                'average_marks' => $avgMarks,
+                'tested_verses' => $testedVerses,
+                'notes' => $notes
+            ];
+            return response()->json($response);
+
+        }
     }
 
     /**
