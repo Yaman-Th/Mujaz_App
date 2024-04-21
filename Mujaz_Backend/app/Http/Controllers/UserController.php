@@ -177,11 +177,27 @@ class UserController extends Controller
 
     public function update(User $user, Request $request)
     {
-        $user->update([
-            'name' => $request->name,
-            'phone' => $request->phone,
-        ]);
-
+        if ($user->role === 'teacher') {
+            $teacher = teacher::where('user_id', $user->id)->first();
+            $teacher->update([
+                'name' => $request->name,
+            ]);
+            $user->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
+            ]);
+            return response()->json($user, 204);
+        } else if ($user->role === 'student') {
+            $student = student::where('user_id', $user->id)->first();
+            $student->update([
+                'name' => $request->name,
+            ]);
+            $user->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
+            ]);
+            return response()->json($user, 204);
+        } else return response()->json('Error! , You can not update this user');
         return response()->json($user, 200);
     }
 }
