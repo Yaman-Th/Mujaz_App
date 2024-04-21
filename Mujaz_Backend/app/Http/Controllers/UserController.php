@@ -162,8 +162,17 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-        return response()->json(null, 204);
+        if ($user->role === 'teacher') {
+            $teacher = teacher::where('user_id', $user->id)->first();
+            $teacher->delete();
+            $user->delete();
+            return response()->json('User deleted successfully', 204);
+        } else if ($user->role === 'student') {
+            $student = student::where('user_id', $user->id)->first();
+            $student->delete();
+            $user->delete();
+            return response()->json('User deleted successfully', 204);
+        } else return response()->json('Error! , You can not delete this user');
     }
 
     public function update(User $user, Request $request)

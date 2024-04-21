@@ -93,17 +93,20 @@ Route::group((['prefix' => 'teacher', 'middleware' => ['auth:sanctum']]), functi
     // AddNewUser
     Route::post('/user/add', [UserController::class, 'store']);
 
-    // DeleteUser
-    Route::delete('/user/destroy/{user}', [UserController::class, 'destroy']);
-
     // UpdateUserInformtion
     Route::put('/user/{user}', [UserController::class, 'update']);
+
+    // FillStudentInfo
+    Route::put('/student/form/{student}', [StudentController::class, 'update']);
 
     // GetStudentInfo
     Route::get('/student/info/{student}', [StudentController::class, 'showInfo']);
 
     // GetStudentsByTeacher
     Route::get('/students/{teacher}', [StudentController::class, 'getByTeacher']);
+
+    // DeleteStudent
+    Route::delete('student/destroy/{student}', [StudentController::class, 'destroy']);
 
     // FillTeacherInformation
     Route::put('/teacher/form/{teacher}', [TeacherController::class, 'update']);

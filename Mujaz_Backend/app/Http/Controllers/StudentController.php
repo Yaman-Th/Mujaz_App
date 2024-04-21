@@ -93,7 +93,6 @@ class StudentController extends Controller
                 'notes' => $notes
             ];
             return response()->json($response);
-
         }
     }
 
@@ -121,7 +120,9 @@ class StudentController extends Controller
      */
     public function destroy(student $student)
     {
+        $user = User::where('id', $student->user_id);
         $student->delete();
-        return response()->json(null, 204);
+        $user->delete();
+        return response()->json('Student deleted successfully', 204);
     }
 }
