@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,8 @@ Route::post('/user/login', [UserController::class, 'login']);
 
 // RoutesForAdmin
 Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function () {
+
+    Route::post('/save-token', [NotificationController::class, 'saveFCMToken']);
 
     // AddNewUser
     Route::post('/user/add', [UserController::class, 'store']);
@@ -129,6 +132,9 @@ Route::group((['prefix' => 'teacher', 'middleware' => ['auth:sanctum']]), functi
 
 // RoutesForStudents
 Route::group((['prefix' => 'student', 'middleware' => ['auth:sanctum']]), function () {
+
+    Route::post('/save-token', [NotificationController::class, 'saveFCMToken']);
+
 
     // UpdateUserInformtion
     Route::put('/user/{user}', [UserController::class, 'update']);
