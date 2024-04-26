@@ -63,8 +63,8 @@ class StudentController extends Controller
         } else {
 
             // remain amount - DONE
-            $remainPages = 604 - last($lastSession->pages);
-            $remainVerses = $remainPages / 20;
+            $remainPages = (int)(604 - last($lastSession->pages));
+            $remainVerses = (float)($remainPages / 20);
 
             // tested verses - DONE
             $testedVerses = $student->tested_verses;
@@ -77,7 +77,7 @@ class StudentController extends Controller
             for ($i = 0; $i < count($sessions); $i++) {
                 $sum = $sum + $sessions[$i]->mark;
             }
-            $avgMarks = $sum / count($sessions);
+            $avgMarks = (float)($sum / count($sessions));
 
             // notes - DONE
             $notes = $student->notes;

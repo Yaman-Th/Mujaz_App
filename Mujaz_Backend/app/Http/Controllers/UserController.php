@@ -143,13 +143,16 @@ class UserController extends Controller
                     'teacher_id' => $teacher->id,
                     'token' => $user->createToken('myapptoken')->plainTextToken,
                 ]);
-        } else
+        } else if ($user->role === 'student') {
+            $student = student::where('user_id', $user->id)->first();
             return response()
                 ->json([
                     'message' => 'You have logged in successfully.',
                     'user' => $user,
+                    'student_id' => $student->id,
                     'token' => $user->createToken('myapptoken')->plainTextToken,
                 ]);
+        } else return response()->json('Failed To login, Please Try again');
     }
 
     public function logout(Request $request)

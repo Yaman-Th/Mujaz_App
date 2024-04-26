@@ -26,7 +26,7 @@ return new class extends Migration
             $table->json('mistakes')->nullable();
             $table->integer('taps_num');
             $table->float('mark');
-            $table->time('duration');
+            $table->time('duration')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();
         });
