@@ -92,9 +92,7 @@ class SessionController extends Controller
     
             if ($deviceToken) {
                 $title = 'جلسة جديدة من ' . $teacher->name . '!😍';
-                $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n"
-                      . "الكمية: " . $request->amount . "\n"
-                      . "الأخطاء: " . $request->mistakes;
+                $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n";
     
                   
                   $customData = [
@@ -125,7 +123,6 @@ protected function sendNotification($deviceToken, $title, $body, $customData)
             'body' => $body,
             'icon' => 'ic_notification', 
             'sound' => 'default',
-            'largeIcon' => 'https://w7.pngwing.com/pngs/409/926/png-transparent-opened-quran-online-quran-project-islam-mosque-allah-quran-quran-furniture-religion-god-in-islam-thumbnail.png',
         ],
         'data' => $customData,
     ];
@@ -136,11 +133,12 @@ protected function sendNotification($deviceToken, $title, $body, $customData)
     ])->post($url, $data);
 
     if ($response->successful()) {
+        Log::info('FCM notification sent successfully', ['response' => $response->body()]);
         return response()->json('Notification sent successfully', 200);
     } else {
         Log::error('Failed to send FCM notification', ['response' => $response->body()]);
         return response()->json('Failed to send notification', 500);
-    }
+    } 
 }
 
 
