@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Log;
 
 use App\Models\session;
 use App\Models\student;
@@ -22,111 +22,130 @@ class SessionController extends Controller
         return response()->json($sessions);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */ public function store(Request $request)
-    {
-        $request->validate([
-            'date' => 'required|numeric',
-            'pages' => 'required|numeric',
-            'ayat' => 'required|numeric',
-            'amount' => 'required|numeric',
-            'mistakes' => 'string',
-            'taps_num' => 'numeric',
-            'mark' => 'required|numeric',
-            'duration' => 'numeric',
-            'notes' => 'string'
+
+
+    public function store(Request $request)
+{
+   
+    // $request->validate([
+    //     'pages' => 'required|numeric',
+    //     'notes' => 'string'
+    // ]);
+
+    $user = User::find($request->user_id);
+    $student = Student::find($request->student_id);
+    $teacher = Teacher::where('user_id', $request->user_id)->first();
+
+    if ($user->role === 'admin') {
+        $session = Session::create([
+            'date' => $request->date,
+            'student_id' => $student->id,
+            'student_name' => $student->name,
+            'teacher_id' => $user->id,
+            'teacher_name' => $user->name,
+            'pages' => $request->pages,
+            'ayat' => $request->ayat,
+            'amount' => $request->amount,
+            'mistakes' => $request->mistakes,
+            'taps_num' => $request->taps_num,
+            'mark' => $request->mark,
+            'duration' => $request->duration,
+            'notes' => $request->notes
         ]);
 
-        $user = User::find($request->user_id);
-        $student = Student::find($request->student_id);
-        $teacher = Teacher::where('user_id', $request->user_id)->first();
+        $deviceToken = Notification::where('user_id', $request->user_id)->value('device_token');
 
-        if ($user->role === 'admin') {
-            $session = Session::create([
-                'date' => $request->date,
-                'student_id' => $student->id,
-                'student_name' => $student->name,
-                'teacher_id' => $user->id,
-                'teacher_name' => $user->name,
-                'pages' => $request->pages,
-                'ayat' => $request->ayat,
-                'amount' => $request->amount,
-                'mistakes' => $request->mistakes,
-                'taps_num' => $request->taps_num,
-                'mark' => $request->mark,
-                'duration' => $request->duration,
-                'notes' => $request->notes
-            ]);
+        if ($deviceToken) {
+            $title = 'جلسة جديدة للطالب ' . $student->name . '!';
+            $body = "تم تسميع جلسة جديدة 😍! قم بإنشاء موعد آخر";
 
-            $deviceToken = Notification::where('user_id', $request->user_id)->value('device_token');
+            // Custom data to be included in the notification
+            $customData = [
+                'التاريخ' => $request->date,
+                'الأستاذ' => $user->name,
+                'رقم الجلسة' => $session->id,
+                'الكمية' => $request->amount,
+            ];
 
+            $this->sendNotification($deviceToken, $title, $body, $customData);
+        }
+    } else if ($user->role === 'teacher') {
+        $session = Session::create([
+            'date' => $request->date,
+            'student_id' => $student->id,
+            'student_name' => $student->name,
+            'teacher_id' => $teacher->id,
+            'teacher_name' => $teacher->name,
+            'pages' => $request->pages,
+            'ayat' => $request->ayat,
+            'amount' => $request->amount,
+            'mistakes' => $request->mistakes,
+            'taps_num' => $request->taps_num,
+            'mark' => $request->mark,
+            'duration' => $request->duration,
+            'notes' => $request->notes
+        ]);
+
+        $admin = User::where('role', 'admin')->first();
+        if ($admin) {
+            $deviceToken = Notification::where('user_id', $admin->id)->value('device_token');
+    
             if ($deviceToken) {
-                $title = 'جلسة جديدة!';
-                $body = "تم تسميع جلسة جديدة ! استمر \n ";
-
-                // Custom data to be included in the notification
-                $customData = [
+                $title = 'جلسة جديدة من ' . $teacher->name . '!😍';
+                $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n"
+                      . "الكمية: " . $request->amount . "\n"
+                      . "الأخطاء: " . $request->mistakes;
+    
+                  
+                  $customData = [
                     'التاريخ' => $request->date,
-                    'الأستاذ' => $user->name,
+                    'الأستاذ' => $teacher->name,
                     'رقم الجلسة' => $session->id,
                     'الكمية' => $request->amount,
                 ];
-
+    
                 $this->sendNotification($deviceToken, $title, $body, $customData);
             }
-        } else if ($user->role === 'teacher') {
-            $session = session::create(
-                [
-                    'date' => $request->date,
-                    'student_id' => $student->id,
-                    'student_name' => $student->name,
-                    'teacher_id' => $teacher->id,
-                    'teacher_name' => $teacher->name,
-                    'pages' => $request->pages,
-                    'ayat' => $request->ayat,
-                    'amount' => $request->amount,
-                    'mistakes' => $request->mistakes,
-                    'taps_num' => $request->taps_num,
-                    'mark' => $request->mark,
-                    'duration' => $request->duration,
-                    'notes' => $request->notes
-                ]
-            );
-        }
-
-        return response()->json('session created successfully', 200);
-    }
-
-
-    protected function sendNotification($deviceToken, $title, $body, $customData)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $serverKey = 'AAAAn5DuF_g:APA91bExwuB_tW3W_OaV1DhJpLXIxqmh1XVBW4tP4-N-Yt0zS6Q7l5QuvQ_6ZDtdEgjeUyILouiMSMBn8VhMrfhJ0kzsJ5l65kYLjG0iPRG-zS-VxjO7LkfW9ktd-X3_gtind_zvZJ0a';
-
-        $body = "\xE2\x80\x8F" . $body;
-
-        $data = [
-            'to' => $deviceToken,
-            'notification' => [
-                'title' => $title,
-                'body' => $body,
-            ],
-            'data' => $customData,
-        ];
-
-        // Send HTTP POST request to FCM endpoint
-        $response = Http::withHeaders([
-            'Authorization' => 'key=' . $serverKey,
-            'Content-Type' => 'application/json',
-        ])->post($url, $data);
-
-        if ($response->successful()) {
-            return response()->json('Notification sent successfully', 200);
-        } else {
-            return response()->json('Failed to send notification', 500);
         }
     }
+
+    return response()->json('Session created successfully', 200);
+}
+
+
+protected function sendNotification($deviceToken, $title, $body, $customData)
+{
+    $url = 'https://fcm.googleapis.com/fcm/send';
+    $serverKey = 'AAAAn5DuF_g:APA91bExwuB_tW3W_OaV1DhJpLXIxqmh1XVBW4tP4-N-Yt0zS6Q7l5QuvQ_6ZDtdEgjeUyILouiMSMBn8VhMrfhJ0kzsJ5l65kYLjG0iPRG-zS-VxjO7LkfW9ktd-X3_gtind_zvZJ0a';
+
+    $data = [
+        'to' => $deviceToken,
+        'notification' => [
+            'title' => $title,
+            'body' => $body,
+            'icon' => 'ic_notification', 
+            'sound' => 'default',
+            'largeIcon' => 'https://w7.pngwing.com/pngs/409/926/png-transparent-opened-quran-online-quran-project-islam-mosque-allah-quran-quran-furniture-religion-god-in-islam-thumbnail.png',
+        ],
+        'data' => $customData,
+    ];
+
+    $response = Http::withHeaders([
+        'Authorization' => 'key=' . $serverKey,
+        'Content-Type' => 'application/json',
+    ])->post($url, $data);
+
+    if ($response->successful()) {
+        return response()->json('Notification sent successfully', 200);
+    } else {
+        Log::error('Failed to send FCM notification', ['response' => $response->body()]);
+        return response()->json('Failed to send notification', 500);
+    }
+}
+
+
+
+    
 
 
     // Get sessions by studnet
