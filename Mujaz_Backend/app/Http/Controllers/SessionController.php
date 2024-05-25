@@ -25,91 +25,110 @@ class SessionController extends Controller
 
 
     public function store(Request $request)
-{
-   
-    // $request->validate([
-    //     'pages' => 'required|numeric',
-    //     'notes' => 'string'
-    // ]);
-
-    $user = User::find($request->user_id);
-    $student = Student::find($request->student_id);
-    $teacher = Teacher::where('user_id', $request->user_id)->first();
-
-    if ($user->role === 'admin') {
-        $session = Session::create([
-            'date' => $request->date,
-            'student_id' => $student->id,
-            'student_name' => $student->name,
-            'teacher_id' => $user->id,
-            'teacher_name' => $user->name,
-            'pages' => $request->pages,
-            'ayat' => $request->ayat,
-            'amount' => $request->amount,
-            'mistakes' => $request->mistakes,
-            'taps_num' => $request->taps_num,
-            'mark' => $request->mark,
-            'duration' => $request->duration,
-            'notes' => $request->notes
-        ]);
-
-        $deviceToken = Notification::where('user_id', $request->user_id)->value('device_token');
-
-        if ($deviceToken) {
-            $title = 'جلسة جديدة للطالب ' . $student->name . '!';
-            $body = "تم تسميع جلسة جديدة 😍! قم بإنشاء موعد آخر";
-
-            // Custom data to be included in the notification
-            $customData = [
-                'التاريخ' => $request->date,
-                'الأستاذ' => $user->name,
-                'رقم الجلسة' => $session->id,
-                'الكمية' => $request->amount,
-            ];
-
-            $this->sendNotification($deviceToken, $title, $body, $customData);
+    {
+        Log::info('Starting session creation', $request->all());
+    
+        $user = User::find($request->user_id);
+        $student = Student::find($request->student_id);
+        $teacher = Teacher::where('user_id', $request->user_id)->first();
+    
+        if (!$user || !$student) {
+            Log::error('User or student not found', ['user_id' => $request->user_id, 'student_id' => $request->student_id]);
+            return response()->json(['error' => 'User or student not found'], 404);
         }
-    } else if ($user->role === 'teacher') {
-        $session = Session::create([
-            'date' => $request->date,
-            'student_id' => $student->id,
-            'student_name' => $student->name,
-            'teacher_id' => $teacher->id,
-            'teacher_name' => $teacher->name,
-            'pages' => $request->pages,
-            'ayat' => $request->ayat,
-            'amount' => $request->amount,
-            'mistakes' => $request->mistakes,
-            'taps_num' => $request->taps_num,
-            'mark' => $request->mark,
-            'duration' => $request->duration,
-            'notes' => $request->notes
-        ]);
-
-        $admin = User::where('role', 'admin')->first();
-        if ($admin) {
-            $deviceToken = Notification::where('user_id', $admin->id)->value('device_token');
     
-            if ($deviceToken) {
-                $title = 'جلسة جديدة تمت بواسطة الأستاذ ' . $teacher->name . '!😍';
-                $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n";
+        try {
+            if ($user->role === 'admin') {
+                $session = Session::create([
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $user->id,
+                    'teacher_name' => $user->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
+                    'mark' => $request->mark,
+                    'duration' => $request->duration,
+                    'notes' => $request->notes,
+                ]);
     
-                  
-                  $customData = [
-                    'التاريخ' => $request->date,
-                    'الأستاذ' => $teacher->name,
-                    'رقم الجلسة' => $session->id,
-                    'الكمية' => $request->amount,
-                ];
+                Log::info('Session created by admin', ['session' => $session]);
     
-                $this->sendNotification($deviceToken, $title, $body, $customData);
+                $deviceToken = Notification::where('user_id', $request->user_id)->value('device_token');
+    
+                if ($deviceToken) {
+                    $title = 'جلسة جديدة للطالب ' . $student->name . '!';
+                    $body = "تم تسميع جلسة جديدة 😍! قم بإنشاء موعد آخر";
+    
+                    $customData = [
+                        'التاريخ' => $request->date,
+                        'الأستاذ' => $user->name,
+                        'رقم الجلسة' => $session->id,
+                        'الكمية' => $request->amount,
+                    ];
+    
+                    $this->sendNotification($deviceToken, $title, $body, $customData);
+                    Log::info('Notification sent to admin', ['deviceToken' => $deviceToken]);
+                }
+            } else if ($user->role === 'teacher') {
+                if (!$teacher) {
+                    Log::error('Teacher not found for user', ['user_id' => $request->user_id]);
+                    return response()->json(['error' => 'Teacher not found'], 404);
+                }
+    
+                $session = Session::create([
+                    'date' => $request->date,
+                    'student_id' => $student->id,
+                    'student_name' => $student->name,
+                    'teacher_id' => $teacher->id,
+                    'teacher_name' => $teacher->name,
+                    'pages' => $request->pages,
+                    'ayat' => $request->ayat,
+                    'amount' => $request->amount,
+                    'mistakes' => $request->mistakes,
+                    'taps_num' => $request->taps_num,
+                    'mark' => $request->mark,
+                    'duration' => $request->duration,
+                    'notes' => $request->notes,
+                ]);
+    
+                Log::info('Session created by teacher', ['session' => $session]);
+    
+                $admin = User::where('role', 'admin')->first();
+                if ($admin) {
+                    $deviceToken = Notification::where('user_id', $admin->id)->value('device_token');
+    
+                    if ($deviceToken) {
+                        $title = 'جلسة جديدة تمت بواسطة الأستاذ ' . $teacher->name . '!😍';
+                        $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n";
+    
+                        $customData = [
+                            'التاريخ' => $request->date,
+                            'الأستاذ' => $teacher->name,
+                            'رقم الجلسة' => $session->id,
+                            'الكمية' => $request->amount,
+                        ];
+    
+                        $this->sendNotification($deviceToken, $title, $body, $customData);
+                        Log::info('Notification sent to admin by teacher', ['deviceToken' => $deviceToken]);
+                    }
+                }
             }
+    
+            return response()->json('Session created successfully', 200);
+        } catch (\Exception $e) {
+            Log::error('Error creating session', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
-
-    return response()->json('Session created successfully', 200);
-}
-
 
 protected function sendNotification($deviceToken, $title, $body, $customData)
 {
