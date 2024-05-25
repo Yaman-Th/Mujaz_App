@@ -91,7 +91,7 @@ class SessionController extends Controller
             $deviceToken = Notification::where('user_id', $admin->id)->value('device_token');
     
             if ($deviceToken) {
-                $title = 'جلسة جديدة من ' . $teacher->name . '!😍';
+                $title = 'جلسة جديدة تمت بواسطة الأستاذ ' . $teacher->name . '!😍';
                 $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n";
     
                   
