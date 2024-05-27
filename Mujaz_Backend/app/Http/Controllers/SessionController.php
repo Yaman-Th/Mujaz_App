@@ -23,7 +23,7 @@ class SessionController extends Controller
     }
 
 
-
+    
     public function store(Request $request)
     {
         Log::info('Starting session creation', $request->all());
@@ -57,9 +57,9 @@ class SessionController extends Controller
     
                 Log::info('Session created by admin', ['session' => $session]);
     
-                $deviceToken = Notification::where('user_id', $request->user_id)->value('device_token');
+                $adminDeviceToken = Notification::where('user_id', $user->id)->value('device_token');
     
-                if ($deviceToken) {
+                if ($adminDeviceToken) {
                     $title = 'جلسة جديدة للطالب ' . $student->name . '!';
                     $body = "تم تسميع جلسة جديدة 😍! قم بإنشاء موعد آخر";
     
@@ -70,8 +70,8 @@ class SessionController extends Controller
                         'الكمية' => $request->amount,
                     ];
     
-                    $this->sendNotification($deviceToken, $title, $body, $customData);
-                    Log::info('Notification sent to admin', ['deviceToken' => $deviceToken]);
+                    $this->sendNotification($adminDeviceToken, $title, $body, $customData);
+                    Log::info('Notification sent to admin', ['deviceToken' => $adminDeviceToken]);
                 }
             } else if ($user->role === 'teacher') {
                 if (!$teacher) {
@@ -99,9 +99,9 @@ class SessionController extends Controller
     
                 $admin = User::where('role', 'admin')->first();
                 if ($admin) {
-                    $deviceToken = Notification::where('user_id', $admin->id)->value('device_token');
+                    $adminDeviceToken = Notification::where('user_id', $admin->id)->value('device_token');
     
-                    if ($deviceToken) {
+                    if ($adminDeviceToken) {
                         $title = 'جلسة جديدة تمت بواسطة الأستاذ ' . $teacher->name . '!😍';
                         $body = "تم تسميع جلسة جديدة✔️ للطالب " . $student->name . "!\n";
     
@@ -112,8 +112,8 @@ class SessionController extends Controller
                             'الكمية' => $request->amount,
                         ];
     
-                        $this->sendNotification($deviceToken, $title, $body, $customData);
-                        Log::info('Notification sent to admin by teacher', ['deviceToken' => $deviceToken]);
+                        $this->sendNotification($adminDeviceToken, $title, $body, $customData);
+                        Log::info('Notification sent to admin by teacher', ['deviceToken' => $adminDeviceToken]);
                     }
                 }
             }
@@ -129,6 +129,7 @@ class SessionController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+    
 
 protected function sendNotification($deviceToken, $title, $body, $customData)
 {
