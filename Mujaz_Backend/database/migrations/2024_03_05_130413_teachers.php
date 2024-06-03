@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique(true);
             $table->foreignIdFor(User::class);
+            $table->integer('phone')->nullable();
             //$table->string('student_name')->default('student');
             //$table->integer('students_id')->default('0');
             $table->timestamps();

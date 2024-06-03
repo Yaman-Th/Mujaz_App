@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\admin;
 use App\Models\User;
 use App\Models\student;
 use App\Models\teacher;
@@ -180,7 +181,17 @@ class UserController extends Controller
 
     public function update(User $user, Request $request)
     {
-        if ($user->role === 'teacher') {
+        if ($user->role === 'admin') {
+            $admin = admin::where('user_id', $user->id)->first();
+            $admin->update([
+                'name' => $request->name,
+            ]);
+            $user->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
+            ]);
+            return response()->json($user, 204);
+        } else if ($user->role === 'teacher') {
             $teacher = teacher::where('user_id', $user->id)->first();
             $teacher->update([
                 'name' => $request->name,
@@ -201,6 +212,12 @@ class UserController extends Controller
             ]);
             return response()->json($user, 204);
         } else return response()->json('Error! , You can not update this user');
+        return response()->json($user, 200);
+    }
+
+    public function resetPassword(User $user, Request $request)
+    {
+        $user->update(['password' => $request->password]);
         return response()->json($user, 200);
     }
 }

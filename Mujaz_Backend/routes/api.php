@@ -46,6 +46,9 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     // GetUserByid
     Route::get('/user/{id}', [UserController::class, 'show']);
 
+    // ResetPassword
+    Route::put('/user/reset/{user}', [UserController::class, 'resetPassword']);
+
     // FillStudentInfo
     Route::put('/student/form/{student}', [StudentController::class, 'update']);
 
