@@ -183,18 +183,25 @@ class UserController extends Controller
     {
         if ($user->role === 'admin') {
             $admin = admin::where('user_id', $user->id)->first();
+            $teacher = teacher::where('user_id', $user->id)->first();
             $admin->update([
                 'name' => $request->name,
+            ]);
+            $teacher->update([
+                'name' => $request->name,
+                'phone' => $request->phone,
             ]);
             $user->update([
                 'name' => $request->name,
                 'phone' => $request->phone,
             ]);
+
             return response()->json($user, 204);
         } else if ($user->role === 'teacher') {
             $teacher = teacher::where('user_id', $user->id)->first();
             $teacher->update([
                 'name' => $request->name,
+                'phone' => $request->phone,
             ]);
             $user->update([
                 'name' => $request->name,
@@ -205,6 +212,7 @@ class UserController extends Controller
             $student = student::where('user_id', $user->id)->first();
             $student->update([
                 'name' => $request->name,
+                'phone' => $request->phone,
             ]);
             $user->update([
                 'name' => $request->name,
