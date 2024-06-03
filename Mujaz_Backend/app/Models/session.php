@@ -13,6 +13,7 @@ class session extends Model
         'student_name',
         'teacher_id',
         'teacher_name',
+        'surah',
         'pages',
         'ayat',
         'amount',

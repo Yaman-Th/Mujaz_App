@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('student_name');
             $table->foreignIdFor(teacher::class);
             $table->string('teacher_name');
+            $table->string('surah')->nullable();
             $table->json('pages')->nullable();
             $table->json('ayat')->nullable();
             $table->float('amount');

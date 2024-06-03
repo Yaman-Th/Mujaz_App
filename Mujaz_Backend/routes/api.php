@@ -32,7 +32,7 @@ Route::group((['prefix' => 'admin', 'middleware' => ['auth:sanctum']]), function
     Route::post('/user/add', [UserController::class, 'store']);
 
     // GetAcounts
-    Route::get('/user/get', [UserController::class, 'getAcounts']);
+    Route::get('/users/get', [UserController::class, 'getAcounts']);
 
     // UpdateUserInformtion
     Route::put('/user/{user}', [UserController::class, 'update']);
