@@ -65,8 +65,6 @@ class StudentController extends Controller
             // remain amount - DONE
             $remainPages = (int)(604 - last($lastSession->pages));
             $remainVerses = (float)($remainPages / 20);
-            if ($remainVerses >= 30.0)
-                $remainVerses = 30.0;
 
             // tested verses - DONE
             $testedVerses = $student->tested_verses;
